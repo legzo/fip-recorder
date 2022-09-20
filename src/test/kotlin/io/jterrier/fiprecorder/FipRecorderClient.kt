@@ -1,4 +1,4 @@
-package io.fiprecorder
+package io.jterrier.fiprecorder
 
 import org.http4k.client.OkHttp
 import org.http4k.core.HttpHandler
