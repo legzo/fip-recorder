@@ -1,5 +1,8 @@
 package io.jterrier.fiprecorder
 
+import io.jterrier.fiprecorder.apis.FipApiConnector
+import io.jterrier.fiprecorder.apis.models.Song
+import io.jterrier.fiprecorder.database.DatabaseConnector
 import io.jterrier.fiprecorder.models.HandlebarsViewModel
 import org.http4k.core.Body
 import org.http4k.core.ContentType.Companion.TEXT_HTML
@@ -17,16 +20,16 @@ import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
-private val logger: Logger = LoggerFactory.getLogger("io.jterrier.fiprecorder.Main")
+private val logger = LoggerFactory.getLogger("io.jterrier.fiprecorder.Main")
 
 private val songListLens = Body.auto<List<Song>>().toLens()
 
 private val fipApiConnector = FipApiConnector()
+private val db = DatabaseConnector()
 
 val app: HttpHandler = routes(
     "/ping" bind GET to {
@@ -36,8 +39,20 @@ val app: HttpHandler = routes(
     "/songs" bind GET to {
         val dateAsString = it.query("date")
         val localDate = LocalDate.parse(dateAsString)
+        logger.info("Treating date : $localDate")
 
-        songListLens.inject(fipApiConnector.getSongsForDay(localDate), Response(OK))
+        if (!db.isDateDone(localDate)) {
+            logger.info("Need to fetch data from Fip")
+            val songs = fipApiConnector.getSongsForDay(localDate)
+            logger.info("Songs fetched, inserting them")
+            db.insertSongs(songs, localDate)
+            logger.info("Songs inserted, returning to json")
+            songListLens.inject(songs, Response(OK))
+        } else {
+            logger.info("No need to fetch any data")
+            Response(OK)
+        }
+
     },
 
     "/templates/handlebars" bind GET to {

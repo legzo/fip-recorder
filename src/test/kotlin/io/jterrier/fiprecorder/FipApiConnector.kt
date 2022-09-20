@@ -1,11 +1,12 @@
 package io.jterrier.fiprecorder
 
+import io.jterrier.fiprecorder.apis.FipApiConnector
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
 
 fun main() {
-    val logger = LoggerFactory.getLogger("io.jterrier.fiprecorder.FipApiConnector")
+    val logger = LoggerFactory.getLogger("io.jterrier.fiprecorder.apis.FipApiConnector")
     logger.info("▶️")
     val songsOf17 = FipApiConnector().getSongsForDay(LocalDate.of(2022, 9, 17))
     logger.info("⏹")
