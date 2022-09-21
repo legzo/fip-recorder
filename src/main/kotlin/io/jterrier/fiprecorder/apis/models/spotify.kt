@@ -1,15 +1,15 @@
 package io.jterrier.fiprecorder.apis.models
 
-data class PlaylistList(
-    val items: List<Playlist>
+data class SpotifyPlaylistList(
+    val items: List<SpotifyPlaylist>
 )
 
-data class Playlist(
+data class SpotifyPlaylist(
     val name: String,
     val href: String,
-    val tracks: Tracks
+    val tracks: SpotifyTracks
 )
 
-data class Tracks(
+data class SpotifyTracks(
     val total: Int
 )

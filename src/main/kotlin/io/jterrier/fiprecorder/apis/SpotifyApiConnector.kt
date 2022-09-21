@@ -1,7 +1,9 @@
 package io.jterrier.fiprecorder.apis
 
-import io.jterrier.fiprecorder.apis.models.Playlist
-import io.jterrier.fiprecorder.apis.models.PlaylistList
+import io.jterrier.fiprecorder.apis.models.SpotifyPlaylist
+import io.jterrier.fiprecorder.apis.models.SpotifyPlaylistList
+import io.jterrier.fiprecorder.models.Playlist
+import io.jterrier.fiprecorder.services.PlaylistRepository
 import io.jterrier.fiprecorder.spotifyConfig
 import org.http4k.client.OkHttp
 import org.http4k.core.Body
@@ -16,7 +18,7 @@ import org.http4k.format.Jackson.auto
 import org.http4k.security.oauth.client.RefreshingOAuthToken
 import org.slf4j.LoggerFactory
 
-class SpotifyApiConnector {
+class SpotifyApiConnector : PlaylistRepository {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -25,7 +27,7 @@ class SpotifyApiConnector {
 
     private val client: HttpHandler = OkHttp()
 
-    private val songListLens = Body.auto<PlaylistList>().toLens()
+    private val songListLens = Body.auto<SpotifyPlaylistList>().toLens()
 
     private val clientCredentials = with(spotifyConfig) {
         Credentials(clientId.value, clientSecret.value)
@@ -39,17 +41,22 @@ class SpotifyApiConnector {
         ).then(client)
 
 
-    fun getPlaylists(): List<Playlist> {
+    override fun getPlaylists(): List<Playlist> {
         logger.info("Getting playlists")
 
-        val response = refreshingOAuthClient(
-            Request(GET, "$apiUrl/users/legzo/playlists")
-        )
+        val response =
+            refreshingOAuthClient(Request(GET, "$apiUrl/users/legzo/playlists"))
 
         val playlists = songListLens(response).items
-
         logger.info("Got ${playlists.size} playlists")
-        return playlists
+        return playlists.map { it.toPlaylist() }
     }
+
+    private fun SpotifyPlaylist.toPlaylist() =
+        Playlist(
+            name = this.name,
+            url = this.href,
+            tracksCount = this.tracks.total
+        )
 
 }
