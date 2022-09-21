@@ -2,12 +2,12 @@ package io.jterrier.fiprecorder
 
 import io.jterrier.fiprecorder.apis.FipApiConnector
 import io.jterrier.fiprecorder.apis.SpotifyApiConnector
-import io.jterrier.fiprecorder.controllers.PlaylistsController
-import io.jterrier.fiprecorder.controllers.SongsController
+import io.jterrier.fiprecorder.controllers.api.PlaylistsController
+import io.jterrier.fiprecorder.controllers.api.TracksController
 import io.jterrier.fiprecorder.database.DatabaseConnector
 import io.jterrier.fiprecorder.services.PlaylistService
 import io.jterrier.fiprecorder.services.TrackService
-import io.jterrier.fiprecorder.web.WebController
+import io.jterrier.fiprecorder.controllers.web.WebController
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
 import org.http4k.routing.bind
@@ -26,17 +26,17 @@ private val db = DatabaseConnector()
 private val trackService = TrackService(fipApi, db)
 private val playlistService = PlaylistService(spotifyApi)
 
-private val songsController = SongsController(trackService)
+private val tracksController = TracksController(trackService)
 private val playlistsController = PlaylistsController(playlistService)
-private val webController = WebController()
+private val webController = WebController(trackService)
 
 val app: HttpHandler = routes(
         "/api" bind routes(
-            "/songs" bind GET to songsController::loadSongsForDay,
+            "/tracks" bind GET to tracksController::loadSongsForDay,
             "/playlists" bind GET to playlistsController::getPlaylists,
         ),
         routes(
-            "/templates/handlebars" bind GET to webController::showPage
+            "/tracks" bind GET to webController::showPage
         )
 )
 

@@ -1,4 +1,4 @@
-package io.jterrier.fiprecorder.controllers
+package io.jterrier.fiprecorder.controllers.api
 
 import io.jterrier.fiprecorder.models.Playlist
 import io.jterrier.fiprecorder.services.PlaylistService
@@ -17,7 +17,7 @@ class PlaylistsController(
 
     private val playlistListLens = Body.auto<List<Playlist>>().toLens()
 
-    fun getPlaylists(request: Request) =
+    fun getPlaylists(@Suppress("UNUSED_PARAMETER") request: Request) =
         playlistListLens.inject(playlistService.getPlaylists(), Response(Status.OK))
             .also { logger.info("Returning playlists") }
 

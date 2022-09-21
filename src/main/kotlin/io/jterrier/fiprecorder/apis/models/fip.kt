@@ -17,7 +17,7 @@ data class FipSong(
 )
 
 data class FipRelease(
-    val title: String,
+    val title: String?,
     val label: String?,
 )
 

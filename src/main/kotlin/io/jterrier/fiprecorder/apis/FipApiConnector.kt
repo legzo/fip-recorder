@@ -59,7 +59,7 @@ class FipApiConnector : PlayedTracksRepository {
         Track(
             title = this.firstLine,
             artist = this.secondLine,
-            album = this.release.title,
+            album = this.release.title.orEmpty(),
             label = this.release.label.orEmpty(),
             year = this.thirdLine?.toInt(),
             visualUrl = this.visual?.src.orEmpty(),

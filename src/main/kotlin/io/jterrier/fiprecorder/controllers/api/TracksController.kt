@@ -1,8 +1,5 @@
-package io.jterrier.fiprecorder.controllers
+package io.jterrier.fiprecorder.controllers.api
 
-import io.jterrier.fiprecorder.apis.FipApiConnector
-import io.jterrier.fiprecorder.apis.models.FipSong
-import io.jterrier.fiprecorder.database.DatabaseConnector
 import io.jterrier.fiprecorder.models.Track
 import io.jterrier.fiprecorder.services.TrackService
 import org.http4k.core.Body
@@ -13,7 +10,7 @@ import org.http4k.format.Jackson.auto
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
-class SongsController(
+class TracksController(
     private val trackService: TrackService,
 ) {
 
