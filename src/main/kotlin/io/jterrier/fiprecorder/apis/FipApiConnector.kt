@@ -10,22 +10,20 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.format.Jackson.auto
 import org.slf4j.LoggerFactory
+import io.jterrier.fiprecorder.toEpoch
 import java.time.LocalDate
-import java.time.ZoneId
 
 class FipApiConnector {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     private val apiUrl = "https://www.radiofrance.fr/api/v1.9/stations/fip/webradios/fip/songs"
 
     private val client: HttpHandler = OkHttp()
     private val songListLens = Body.auto<SongList>().toLens()
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
     fun getSongsForDay(date: LocalDate): List<Song> =
         getSongWithCursor(epoch = date.toEpoch(), cursor = null)
-
-    private fun LocalDate.toEpoch() = atStartOfDay(ZoneId.of("Europe/Paris")).toEpochSecond()
 
     private fun getSongWithCursor(
         epoch: Long,
@@ -43,9 +41,13 @@ class FipApiConnector {
 
         val songList = songListLens(response)
 
-        return when (songList.next) {
-            null -> currentSongList + songList.songs
-            else -> getSongWithCursor(epoch, songList.next, currentSongList + songList.songs)
+        // Le curseur dépasse la durée de la journée, du coup on break dès qu'on
+        // atteint une chanson ayant été diffusée le jour suivant.
+        val (sameDaySongs, nextDaySongs) = songList.songs.partition { it.start <= epoch + 24 * 60 * 60 }
+
+        return when {
+            songList.next == null || nextDaySongs.isNotEmpty() -> currentSongList + sameDaySongs
+            else -> getSongWithCursor(epoch, songList.next, currentSongList + sameDaySongs)
         }
     }
 }

@@ -38,6 +38,7 @@ dependencies {
     implementation("org.http4k:http4k-server-jetty")
     implementation("org.http4k:http4k-template-handlebars")
     implementation("org.http4k:http4k-cloudnative")
+    implementation("org.http4k:http4k-security-oauth")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")

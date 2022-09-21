@@ -20,7 +20,6 @@ fun main() {
                 firstLine = "test",
                 secondLine = "sds",
                 thirdLine = "2012",
-
                 )
         ), LocalDate.now()
     )

@@ -1,4 +1,4 @@
-package io.jterrier.fiprecorder.models
+package io.jterrier.fiprecorder.web.models
 
 import org.http4k.template.ViewModel
 

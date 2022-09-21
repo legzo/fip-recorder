@@ -1,14 +1,12 @@
 package io.jterrier.fiprecorder.database
 
-import dbPassword
-import dbUrl
-import dbUser
 import io.jterrier.fiprecorder.apis.models.Song
-import io.jterrier.fiprecorder.database.models.Songs
-import io.jterrier.fiprecorder.database.models.Songs.artist
-import io.jterrier.fiprecorder.database.models.Songs.playedAt
-import io.jterrier.fiprecorder.database.models.Songs.title
-import io.jterrier.fiprecorder.database.models.Songs.year
+import io.jterrier.fiprecorder.database.models.SongsTable
+import io.jterrier.fiprecorder.database.models.SongsTable.artist
+import io.jterrier.fiprecorder.database.models.SongsTable.playedAt
+import io.jterrier.fiprecorder.database.models.SongsTable.title
+import io.jterrier.fiprecorder.database.models.SongsTable.year
+import io.jterrier.fiprecorder.databaseConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -22,21 +20,21 @@ class DatabaseConnector {
 
     init {
         Database.connect(
-            url = dbUrl.value,
+            url = databaseConfig.url.value,
             driver = "org.postgresql.Driver",
-            user = dbUser.value,
-            password = dbPassword.value
+            user = databaseConfig.user.value,
+            password = databaseConfig.password.value
         )
 
         transaction {
             // print sql to std-out
             addLogger(StdOutSqlLogger)
-            SchemaUtils.create(Songs)
+            SchemaUtils.create(SongsTable)
         }
     }
 
     fun insertSongs(songs: List<Song>, localDate: LocalDate) = transaction {
-        Songs.batchInsert(songs, shouldReturnGeneratedValues = false) { song ->
+        SongsTable.batchInsert(songs, shouldReturnGeneratedValues = false) { song ->
             this[title] = song.firstLine
             this[artist] = song.secondLine
             this[year] = song.thirdLine?.toInt() ?: -1
@@ -45,7 +43,7 @@ class DatabaseConnector {
     }
 
     fun isDateDone(date: LocalDate): Boolean = transaction {
-        Songs.select { playedAt eq date }.empty().not()
+        SongsTable.select { playedAt eq date }.empty().not()
     }
 
 }
