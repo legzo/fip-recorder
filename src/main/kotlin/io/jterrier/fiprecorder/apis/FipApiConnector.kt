@@ -57,8 +57,8 @@ class FipApiConnector : PlayedTracksRepository {
 
     private fun FipSong.toTrack() =
         Track(
-            title = this.firstLine,
-            artist = this.secondLine,
+            title = this.secondLine,
+            artist = this.firstLine,
             album = this.release.title.orEmpty(),
             label = this.release.label.orEmpty(),
             year = this.thirdLine?.toInt(),
