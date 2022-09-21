@@ -8,6 +8,7 @@ import io.jterrier.fiprecorder.database.DatabaseConnector
 import io.jterrier.fiprecorder.services.PlaylistService
 import io.jterrier.fiprecorder.services.TrackService
 import io.jterrier.fiprecorder.controllers.web.WebController
+import io.jterrier.fiprecorder.services.StatsService
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
 import org.http4k.routing.bind
@@ -25,10 +26,11 @@ private val db = DatabaseConnector()
 
 private val trackService = TrackService(fipApi, db)
 private val playlistService = PlaylistService(spotifyApi)
+private val statsService = StatsService()
 
 private val tracksController = TracksController(trackService)
 private val playlistsController = PlaylistsController(playlistService)
-private val webController = WebController(trackService)
+private val webController = WebController(trackService, statsService)
 
 val app: HttpHandler = routes(
         "/api" bind routes(

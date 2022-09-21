@@ -2,6 +2,7 @@ package io.jterrier.fiprecorder.controllers.web
 
 import io.jterrier.fiprecorder.services.TrackService
 import io.jterrier.fiprecorder.controllers.web.models.ListOfTracksViewModel
+import io.jterrier.fiprecorder.services.StatsService
 import org.http4k.core.Body
 import org.http4k.core.ContentType
 import org.http4k.core.Request
@@ -14,7 +15,8 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
 class WebController(
-    private val trackService: TrackService
+    private val trackService: TrackService,
+    private val statsService: StatsService,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -28,7 +30,7 @@ class WebController(
         val localDate = LocalDate.parse(dateAsString)
         logger.info("Treating date : $localDate")
         val tracks = trackService.getTracksForDate(localDate)
-        val stats = trackService.getStatisticsForTracks(tracks)
+        val stats = statsService.getStatisticsForTracks(tracks, itemNbForTops = 5)
 
         val viewModel = ListOfTracksViewModel.from(localDate, tracks, stats)
         return Response(OK).with(view of viewModel)

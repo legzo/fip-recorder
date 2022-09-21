@@ -5,6 +5,7 @@ import io.jterrier.fiprecorder.models.Track
 import org.http4k.template.ViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class ListOfTracksViewModel(
     val displayDate: String,
@@ -39,9 +40,13 @@ data class ListOfTracksViewModel(
         private fun DateStatistics.toViewModel() =
             DateStatisticsViewModel(
                 trackCount = trackCount,
-                topTenLabels = topTenLabels,
-                topTenYears = topTenYears,
+                topLabels = topLabels.mapKeys { (label, _) -> label.capitalize() },
+                topYears = topYears,
             )
+
+        private fun String.capitalize() =
+            lowercase(Locale.getDefault())
+                .replaceFirstChar { it.titlecase(Locale.getDefault()) }
     }
 }
 
@@ -53,8 +58,8 @@ data class TrackViewModel(
 
 data class DateStatisticsViewModel(
     val trackCount: Int,
-    val topTenLabels: Map<String, Int>,
-    val topTenYears: Map<Int, Int>
+    val topLabels: Map<String, Int>,
+    val topYears: Map<Int, Int>
 )
 
 data class LinksViewModel(
