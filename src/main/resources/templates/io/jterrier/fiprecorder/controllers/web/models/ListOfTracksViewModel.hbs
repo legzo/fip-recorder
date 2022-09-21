@@ -7,65 +7,164 @@
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎧</text></svg>">
     <style>
-        html, body {
-            position: relative;
-            width: 100%;
-            height: 100%;
+
+        :root {
+            --color-dark: #404040;
+            --color-light: #f3f3f3;
+            --color-light-glare: #fff;
+            --color-primary: #0042bf;
+            --color-primary-glare: #d8e2f4;
+            --color-secondary: #ee5141;
+            --color-secondary-glare: #ffe3e5;
+            --space-xs: clamp(0.75rem, 0.69rem + 0.29vw, 0.9375rem);
+            --space-s: clamp(1rem, 0.92rem + 0.39vw, 1.25rem);
+            --space-m: clamp(1.5rem, 1.38rem + 0.58vw, 1.875rem);
+            --space-l: clamp(2rem, 1.84rem + 0.78vw, 2.5rem);
+            --space-xl: clamp(3rem, 2.77rem + 1.17vw, 3.75rem);
+            --space-2xl: clamp(4rem, 3.69rem + 1.55vw, 5rem);
+            --space-3xl: clamp(6rem, 5.53rem + 2.33vw, 7.5rem);
+            --space-xs-s: clamp(0.75rem, 0.59rem + 0.78vw, 1.25rem);
+            --space-s-m: clamp(1rem, 0.73rem + 1.36vw, 1.875rem);
+            --space-m-l: clamp(1.5rem, 1.19rem + 1.55vw, 2.5rem);
+            --space-l-xl: clamp(2rem, 1.46rem + 2.72vw, 3.75rem);
+            --space-l-2xl: clamp(2rem, 1.07rem + 4.66vw, 5rem);
+            --space-xl-2xl: clamp(3rem, 2.38rem + 3.11vw, 5rem);
+            --space-2xl-3xl: clamp(4rem, 2.91rem + 5.44vw, 7.5rem);
+            --size-step-0: clamp(1rem, 0.92rem + 0.39vw, 1.25rem);
+            --size-step-1: clamp(1.1875rem, 1.01rem + 0.87vw, 1.75rem);
+            --size-step-2: clamp(1.4375rem, 1.11rem + 1.65vw, 2.5rem);
+            --size-step-3: clamp(1.75rem, 1.19rem + 2.82vw, 3.5625rem);
+            --size-step-4: clamp(2.0625rem, 1.15rem + 4.56vw, 5rem);
+            --size-step-5: clamp(2.5rem, 1.08rem + 7.09vw, 7.0625rem);
+            --size-step-6: clamp(3rem, 0.84rem + 10.78vw, 9.9375rem);
+            --font-base: Inter, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+            --font-serif: Georgia, sans-serif;
+            --gutter: var(--space-s-m);
+            --border-radius: var(--size-step-1);
+            --transition-base: 250ms ease;
+            --transition-movement: 200ms linear;
+            --transition-fade: 200ms ease;
+            --transition-bounce: 500ms cubic-bezier(0.5, 0.05, 0.2, 1.5);
+            --tracking: -0.05ch;
+            --tracking-s: -0.075ch;
+            --grid-placement: auto-fit;
+            --grid-min-item-size: clamp(18rem, 33%, 20rem);
+            --flow-space: var(--space-s);
         }
 
         body {
-            color: #333;
-            margin: 0;
-            padding: 8px;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            background: var(--color-light);
+            color: var(--color-dark);
+            font-family: var(--font-base);
+            font-size: var(--size-step-1);
+            letter-spacing: var(--tracking);
+            line-height: 1.4
         }
 
-        main {
-            padding: 0 0 20px 40px;
+        h1,
+        h2,
+        h3 {
+            letter-spacing: var(--tracking-s);
+            line-height: 1;
         }
 
-        a {
-            color: rgb(0, 100, 200);
-            text-decoration: none;
+        h1 {
+            font-size: var(--size-step-4)
         }
 
-        a:hover {
-            text-decoration: underline;
+        h2 {
+            font-size: var(--size-step-3)
         }
 
-        a:visited {
-            color: rgb(0, 80, 160);
+        h3 {
+            color: var(--color-primary);
+            font-size: var(--size-step-2)
+        }
+
+        nav {
+            font-size: var(--size-step-3)
+        }
+
+        .region {
+            padding-left: var(--space-m);
+            padding-right: var(--space-m);
+            padding-bottom: var(--space-l-2xl);
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 85rem;
+            position: relative;
         }
 
         .flex-container {
             display: flex;
             flex-direction: row;
+            margin-bottom: var(--space-xs-s);
         }
 
-        .flex-left {
-            width: 25%;
+        .flex-rest {
+            padding-left: var(--space-xs-s);
         }
-        .flex-right {
-            width: 75%;
+
+        svg {
+            width: 1em;
+            vertical-align: bottom;
+        }
+
+        .grid {
+            display: grid;
+            gap: var(--gutter, var(--space-s-m));
+            grid-template-columns:repeat(var(--grid-placement, auto-fill), minmax(var(--grid-min-item-size, 16rem), 1fr))
+        }
+
+        .grid[data-rows=masonry] {
+            align-items: start;
         }
 
     </style>
 </head>
 <body>
 
-<main>
-    <h1>🎧 Tracks du {{displayDate}} ({{stats.trackCount}}) <a href="{{links.previous}}">🔙️</a> <a href="{{links.next}}">🔜</a></h1>
-
-    <div class="flex-container">
-        <div class="flex-left">
-            <h3>Top labels</h3>
+<main class="region">
+    <h1>Tracks du {{displayDate}}
+        <br/>
+        <a href="{{links.previous}}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 16.811c0 .864-.933 1.405-1.683.977l-7.108-4.062a1.125 1.125 0 010-1.953l7.108-4.062A1.125 1.125 0 0121 8.688v8.123zM11.25 16.811c0 .864-.933 1.405-1.683.977l-7.108-4.062a1.125 1.125 0 010-1.953L9.567 7.71a1.125 1.125 0 011.683.977v8.123z"/>
+            </svg>
+        </a>
+        <a href="{{links.next}}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062A1.125 1.125 0 013 16.81V8.688zM12.75 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062a1.125 1.125 0 01-1.683-.977V8.688z"/>
+            </svg>
+        </a>
+    </h1>
+    <div class="grid">
+        <div class="">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/>
+                </svg>
+                Top labels
+            </h3>
             {{#each stats.topTenLabels}}
                 <li>{{@key}} : <code>{{this}}</code></li>
             {{/each}}
         </div>
-        <div class="flex-right">
-            <h3>Top years</h3>
+
+        <div class="">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
+                </svg>
+                Top years
+            </h3>
             {{#each stats.topTenYears}}
                 <li>{{@key}} : <code>{{this}}</code></li>
             {{/each}}
@@ -73,9 +172,17 @@
         </div>
     </div>
 
-    <h3>Les tracks</h3>
+    <h3>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
+        </svg>
+        Les tracks ({{stats.trackCount}})
+    </h3>
     {{#each tracks}}
-        <li><code>{{playedAt}}</code> <b>{{artist}}</b> - {{title}}</li>
+        <div class="flex-container">
+            <div><code>{{playedAt}}</code></div>
+            <div class="flex-rest"><b>{{title}}</b><br/> {{artist}}</div>
+        </div>
     {{/each}}
 </main>
 </body>

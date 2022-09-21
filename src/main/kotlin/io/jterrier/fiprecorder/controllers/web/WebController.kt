@@ -19,7 +19,8 @@ class WebController(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private val renderer = HandlebarsTemplates().HotReload("src/main/resources/templates")
+    private val renderer = HandlebarsTemplates().CachingClasspath("templates")
+    //private val renderer = HandlebarsTemplates().HotReload("src/main/resources/templates")
 
     fun showTracksForDate(request: Request): Response {
         val view = Body.viewModel(renderer, ContentType.TEXT_HTML).toLens()
