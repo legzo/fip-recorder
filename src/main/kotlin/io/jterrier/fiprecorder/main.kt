@@ -36,7 +36,7 @@ val app: HttpHandler = routes(
             "/playlists" bind GET to playlistsController::getPlaylists,
         ),
         routes(
-            "/tracks" bind GET to webController::showPage
+            "/tracks" bind GET to webController::showTracksForDate
         )
 )
 

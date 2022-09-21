@@ -22,7 +22,7 @@
         }
 
         main {
-            padding: 0  0 20px 40px;
+            padding: 0 0 20px 40px;
         }
 
         a {
@@ -38,40 +38,16 @@
             color: rgb(0, 80, 160);
         }
 
-        label {
-            display: block;
+        .flex-container {
+            display: flex;
+            flex-direction: row;
         }
 
-        input, button, select, textarea {
-            font-family: inherit;
-            font-size: inherit;
-            padding: 0.4em;
-            margin: 0 0 0.5em 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 2px;
+        .flex-left {
+            width: 25%;
         }
-
-        input:disabled {
-            color: #ccc;
-        }
-
-        button {
-            color: #333;
-            background-color: #f4f4f4;
-            outline: none;
-        }
-
-        button:disabled {
-            color: #999;
-        }
-
-        button:not(:disabled):active {
-            background-color: #ddd;
-        }
-
-        button:focus {
-            border-color: #666;
+        .flex-right {
+            width: 75%;
         }
 
     </style>
@@ -79,8 +55,25 @@
 <body>
 
 <main>
-    <h1>🎧 Tracks du {{displayDate}} ({{count}})</h1>
+    <h1>🎧 Tracks du {{displayDate}} ({{stats.trackCount}}) <a href="{{links.previous}}">🔙️</a> <a href="{{links.next}}">🔜</a></h1>
 
+    <div class="flex-container">
+        <div class="flex-left">
+            <h3>Top labels</h3>
+            {{#each stats.topTenLabels}}
+                <li>{{@key}} : <code>{{this}}</code></li>
+            {{/each}}
+        </div>
+        <div class="flex-right">
+            <h3>Top years</h3>
+            {{#each stats.topTenYears}}
+                <li>{{@key}} : <code>{{this}}</code></li>
+            {{/each}}
+
+        </div>
+    </div>
+
+    <h3>Les tracks</h3>
     {{#each tracks}}
         <li><code>{{playedAt}}</code> <b>{{artist}}</b> - {{title}}</li>
     {{/each}}

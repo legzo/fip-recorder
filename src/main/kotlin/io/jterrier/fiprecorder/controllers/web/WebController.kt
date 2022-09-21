@@ -19,15 +19,17 @@ class WebController(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun showPage(request: Request): Response {
-        val renderer = HandlebarsTemplates().HotReload("src/main/resources/templates")
+    private val renderer = HandlebarsTemplates().HotReload("src/main/resources/templates")
+
+    fun showTracksForDate(request: Request): Response {
         val view = Body.viewModel(renderer, ContentType.TEXT_HTML).toLens()
         val dateAsString = request.query("date")
         val localDate = LocalDate.parse(dateAsString)
         logger.info("Treating date : $localDate")
         val tracks = trackService.getTracksForDate(localDate)
+        val stats = trackService.getStatisticsForTracks(tracks)
 
-        val viewModel = ListOfTracksViewModel.from(localDate, tracks)
+        val viewModel = ListOfTracksViewModel.from(localDate, tracks, stats)
         return Response(OK).with(view of viewModel)
     }
 
