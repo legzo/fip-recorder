@@ -1,4 +1,10 @@
 {{#partial "content" }}
+<script>
+    function createPlaylist() {
+        fetch('{{{links.createPlaylist}}}')
+    }
+</script>
+
 
 <h1>{{displayDate}}
     <br/>
@@ -17,6 +23,17 @@
         </svg>
     </a>
 </h1>
+
+<h3>
+    <a href="#" onclick="createPlaylist()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+        </svg>
+
+        publish
+    </a>
+</h3>
+
 <div class="grid">
     <div class="">
         <h3>
@@ -51,8 +68,9 @@
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
     </svg>
-    le top 30 <small>(basé sur {{stats.trackCount}})</small>
+    le top 30
 </h3>
+
 {{#each tracks}}
     <div class="flex-container">
         <div><code>{{count}}</code></div>

@@ -25,7 +25,7 @@ data class DayViewModel(
                 stats = statisticsForDate.toViewModel(),
                 links = LinksViewModel(
                     previous = "tracks?date=" + localDate.minusDays(1),
-                    next = "tracks?date=" + localDate.plusDays(1)
+                    next = "tracks?date=" + localDate.plusDays(1),
                 )
             )
 

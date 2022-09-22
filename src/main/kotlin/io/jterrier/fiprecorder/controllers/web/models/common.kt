@@ -24,6 +24,7 @@ data class DateStatisticsViewModel(
 data class LinksViewModel(
     val previous: String,
     val next: String,
+    val createPlaylist: String = "",
 )
 
 

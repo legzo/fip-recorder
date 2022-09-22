@@ -24,7 +24,8 @@ data class WeekViewModel(
                 stats = statisticsForDate.toViewModel(),
                 links = LinksViewModel(
                     previous = "tracksOfWeek?year=${week.year}&week=${week.weekIndex - 1}",
-                    next = "tracksOfWeek?year=${week.year}&week=${week.weekIndex + 1}"
+                    next = "tracksOfWeek?year=${week.year}&week=${week.weekIndex + 1}",
+                    createPlaylist = "api/playlists/create?year=${week.year}&week=${week.weekIndex}"
                 )
             )
 
