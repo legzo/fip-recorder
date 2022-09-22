@@ -26,7 +26,6 @@ class SpotifyApiConnector : PlaylistRepository {
     private val apiUrl = "https://api.spotify.com/v1"
 
     private val client: HttpHandler = OkHttp()
-
     private val songListLens = Body.auto<SpotifyPlaylistList>().toLens()
 
     private val clientCredentials = with(spotifyConfig) {
@@ -40,16 +39,15 @@ class SpotifyApiConnector : PlaylistRepository {
             backend = client,
         ).then(client)
 
-
     override fun getPlaylists(): List<Playlist> {
         logger.info("Getting playlists")
 
         val response =
             refreshingOAuthClient(Request(GET, "$apiUrl/users/legzo/playlists"))
 
-        val playlists = songListLens(response).items
-        logger.info("Got ${playlists.size} playlists")
-        return playlists.map { it.toPlaylist() }
+        val spotifyPlaylists = songListLens(response).items
+        logger.info("Got ${spotifyPlaylists.size} playlists")
+        return spotifyPlaylists.map { it.toPlaylist() }
     }
 
     private fun SpotifyPlaylist.toPlaylist() =

@@ -8,17 +8,11 @@ class TrackService(
     private val database: TracksStorageRepository,
 ) {
 
-    fun getTracksForDate(
-        date: LocalDate,
-    ): List<Track> {
-        val dateDone = database.isDateDone(date)
-
-        return if (dateDone) {
-            database.getTracksForDate(date)
-        } else {
-            fipApi.getPlayedTracksForDate(date)
+    fun getTracksForDate(date: LocalDate): List<Track> =
+        when {
+            database.isDateDone(date) -> database.getTracksForDate(date)
+            else -> fipApi.getPlayedTracksForDate(date)
                 .also { database.insertTracks(it) }
         }
-    }
 
 }

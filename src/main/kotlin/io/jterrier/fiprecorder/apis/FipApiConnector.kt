@@ -1,5 +1,6 @@
 package io.jterrier.fiprecorder.apis
 
+import io.jterrier.fiprecorder.apis.models.FipLink
 import io.jterrier.fiprecorder.apis.models.FipSong
 import io.jterrier.fiprecorder.apis.models.FipSongList
 import io.jterrier.fiprecorder.fromEpoch
@@ -26,10 +27,10 @@ class FipApiConnector : PlayedTracksRepository {
     private val fipSongListLens = Body.auto<FipSongList>().toLens()
 
     override fun getPlayedTracksForDate(localDate: LocalDate): List<Track> =
-        getSongWithCursor(epoch = localDate.toEpoch(), cursor = null)
+        getSongsWithCursor(epoch = localDate.toEpoch(), cursor = null)
             .map { it.toTrack() }
 
-    private fun getSongWithCursor(
+    private fun getSongsWithCursor(
         epoch: Long,
         cursor: String?,
         currentSongList: List<FipSong> = listOf()
@@ -50,8 +51,8 @@ class FipApiConnector : PlayedTracksRepository {
         val (sameDaySongs, nextDaySongs) = songList.songs.partition { it.start <= epoch + 24 * 60 * 60 }
 
         return when {
-            songList.next == null || nextDaySongs.isNotEmpty() -> currentSongList + sameDaySongs
-            else -> getSongWithCursor(epoch, songList.next, currentSongList + sameDaySongs)
+            nextDaySongs.isNotEmpty()  || songList.next == null -> currentSongList + sameDaySongs
+            else -> getSongsWithCursor(epoch, songList.next, currentSongList + sameDaySongs)
         }
     }
 
@@ -66,10 +67,11 @@ class FipApiConnector : PlayedTracksRepository {
             durationInSeconds = (this.end - this.start).toInt(),
             startTime = fromEpoch(this.start),
             endTime = fromEpoch(this.end),
-            spotifyId = this.links
-                .firstOrNull { it.label == "spotify" }?.url
-                .orEmpty()
-                .removePrefix("https://open.spotify.com/track/")
+            spotifyId = this.links.findSpotifyId()
         )
 
+    private fun Collection<FipLink>.findSpotifyId() =
+        firstOrNull { it.label == "spotify" }
+            ?.url.orEmpty()
+            .removePrefix("https://open.spotify.com/track/")
 }
