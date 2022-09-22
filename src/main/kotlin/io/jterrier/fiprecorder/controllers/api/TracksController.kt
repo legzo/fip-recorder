@@ -1,5 +1,8 @@
 package io.jterrier.fiprecorder.controllers.api
 
+import io.jterrier.fiprecorder.controllers.dateQuery
+import io.jterrier.fiprecorder.controllers.weekQuery
+import io.jterrier.fiprecorder.controllers.yearQuery
 import io.jterrier.fiprecorder.models.Statistics
 import io.jterrier.fiprecorder.models.Track
 import io.jterrier.fiprecorder.models.weekNb
@@ -11,7 +14,6 @@ import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
 
 class TracksController(
     private val trackService: TrackService,
@@ -24,8 +26,7 @@ class TracksController(
     private val statsLens = Body.auto<Statistics>().toLens()
 
     fun loadTracksForDay(request: Request): Response {
-        val dateAsString = request.query("date")
-        val localDate = LocalDate.parse(dateAsString)
+        val localDate = dateQuery(request)
         logger.info("Treating date : $localDate")
 
         val tracks = trackService.getTracksForDate(localDate)
@@ -33,11 +34,8 @@ class TracksController(
     }
 
     fun getStatsForWeek(request: Request): Response {
-        val year = request.query("year")?.toInt()
-        val weekIndex = request.query("week")?.toInt()
-
-        if (year == null || weekIndex == null)
-            return Response(Status.BAD_REQUEST)
+        val year = yearQuery(request)
+        val weekIndex = weekQuery(request)
 
         logger.info("Treating week : $year-$weekIndex")
 

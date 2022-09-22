@@ -1,5 +1,7 @@
 package io.jterrier.fiprecorder.controllers.api
 
+import io.jterrier.fiprecorder.controllers.weekQuery
+import io.jterrier.fiprecorder.controllers.yearQuery
 import io.jterrier.fiprecorder.models.Playlist
 import io.jterrier.fiprecorder.models.weekNb
 import io.jterrier.fiprecorder.services.PlaylistService
@@ -8,7 +10,6 @@ import io.jterrier.fiprecorder.services.TrackService
 import org.http4k.core.Body
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
 import org.http4k.format.Jackson.auto
 import org.slf4j.LoggerFactory
@@ -28,12 +29,8 @@ class PlaylistsController(
             .also { logger.info("Returning playlists") }
 
     fun publishPlaylist(request: Request): Response {
-        val year = request.query("year")?.toInt()
-        val weekIndex = request.query("week")?.toInt()
-
-        if (year == null || weekIndex == null) {
-            return Response(BAD_REQUEST)
-        }
+        val year = yearQuery(request)
+        val weekIndex = weekQuery(request)
 
         logger.info("Treating week : $year-$weekIndex")
 
