@@ -9,6 +9,7 @@ class StatsService {
     fun getTopTracks(tracks: Collection<Track>, itemNb: Int): Map<Track, Int> =
         tracks
             .map { it.copy(startTime = LocalDateTime.MIN, endTime = LocalDateTime.MIN) }
+            .filter { it.spotifyId.isNotBlank() }
             .groupAndSortByCount(itemNbForTops = itemNb) { it }
 
 

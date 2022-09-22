@@ -5,6 +5,6 @@ import io.jterrier.fiprecorder.apis.SpotifyApiConnector
 fun main() {
     val api = SpotifyApiConnector()
 
-    api.getPlaylists()
+    api.createPlaylist("Test http4k", listOf())
 }
 

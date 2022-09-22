@@ -16,10 +16,12 @@ data class DatabaseConfig(
 
 data class ClientId(val value: String)
 data class ClientSecret(val value: String)
+data class RefreshToken(val value: String)
 
 data class SpotifyCredentials(
     val clientId: ClientId,
-    val clientSecret: ClientSecret
+    val clientSecret: ClientSecret,
+    val refreshToken: RefreshToken,
 )
 
 val env = Environment.ENV
@@ -30,6 +32,7 @@ val dbPasswordLens: Lens<Environment, DbPassword> = EnvironmentKey.map(::DbPassw
 
 val clientIdLens: Lens<Environment, ClientId> = EnvironmentKey.map(::ClientId).required("SPOTIFY_CLIENT_ID")
 val clientSecretLens: Lens<Environment, ClientSecret> = EnvironmentKey.map(::ClientSecret).required("SPOTIFY_CLIENT_SECRET")
+val refreshTokenLens: Lens<Environment, RefreshToken> = EnvironmentKey.map(::RefreshToken).required("SPOTIFY_REFRESH_TOKEN")
 
 val databaseConfig = DatabaseConfig(
     url = dbUrlLens(env),
@@ -40,4 +43,5 @@ val databaseConfig = DatabaseConfig(
 val spotifyConfig = SpotifyCredentials(
     clientId = clientIdLens(env),
     clientSecret = clientSecretLens(env),
+    refreshToken = refreshTokenLens(env),
 )
