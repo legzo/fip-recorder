@@ -14,12 +14,15 @@ import io.jterrier.fiprecorder.database.models.TracksTable.visualUrl
 import io.jterrier.fiprecorder.database.models.TracksTable.year
 import io.jterrier.fiprecorder.databaseConfig
 import io.jterrier.fiprecorder.models.Track
+import io.jterrier.fiprecorder.models.WeekOfYear
 import io.jterrier.fiprecorder.services.TracksStorageRepository
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
@@ -62,25 +65,49 @@ class DatabaseConnector : TracksStorageRepository {
     override fun getTracksForDate(localDate: LocalDate): List<Track> = transaction {
         TracksTable
             .select { playedDate eq localDate }
-            .map {
-                Track(
-                    title = it[title],
-                    artist = it[artist],
-                    album = it[album],
-                    label = it[label],
-                    year = it[year],
-                    visualUrl = it[visualUrl],
-                    durationInSeconds = it[durationInSeconds],
-                    startTime = it[startTime],
-                    endTime = it[endTime],
-                    spotifyId = it[spotifyId],
-                )
-            }
+            .map { it.toTrackModel() }
     }
+
+
+    override fun getTracksForWeek(week: WeekOfYear): List<Track> = transaction {
+        TracksTable
+            .select { playedDate inList week.days }
+            .map { it.toTrackModel() }
+    }
+
+    private fun ResultRow.toTrackModel() = Track(
+        title = this[title],
+        artist = this[artist],
+        album = this[album],
+        label = this[label],
+        year = this[year],
+        visualUrl = this[visualUrl],
+        durationInSeconds = this[durationInSeconds],
+        startTime = this[startTime],
+        endTime = this[endTime],
+        spotifyId = this[spotifyId],
+    )
+
+    override fun clearTracksForDate(localDate: LocalDate) = transaction {
+        TracksTable
+            .deleteWhere { playedDate eq localDate }
+        Unit
+    }
+
+    override fun clearTracksForWeek(week: WeekOfYear) =
+        week
+            .days
+            .forEach { clearTracksForDate(it) }
 
     override fun isDateDone(date: LocalDate): Boolean = transaction {
         TracksTable
-            .select { playedDate eq date }.empty().not()
+            .select { playedDate eq date }
+            .count() > 200
     }
+
+    override fun isWeekDone(week: WeekOfYear): Boolean =
+        week
+            .days
+            .all { isDateDone(it) }
 
 }

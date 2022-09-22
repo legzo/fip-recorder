@@ -35,7 +35,7 @@ class FipApiConnector : PlayedTracksRepository {
         cursor: String?,
         currentSongList: List<FipSong> = listOf()
     ): List<FipSong> {
-        logger.info("Request to Fip with cursor=$cursor")
+        logger.info("Request to Fip with epoch=$epoch & cursor=$cursor")
 
         val response: Response = client(
             Request(Method.GET, apiUrl)

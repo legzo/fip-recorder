@@ -28,17 +28,19 @@ private val trackService = TrackService(fipApi, db)
 private val playlistService = PlaylistService(spotifyApi)
 private val statsService = StatsService()
 
-private val tracksController = TracksController(trackService)
+private val tracksController = TracksController(trackService, statsService)
 private val playlistsController = PlaylistsController(playlistService)
 private val webController = WebController(trackService, statsService)
 
 val app: HttpHandler = routes(
         "/api" bind routes(
-            "/tracks" bind GET to tracksController::loadSongsForDay,
+            "/tracks" bind GET to tracksController::loadTracksForDay,
+            "/stats" bind GET to tracksController::getStatsForWeek,
             "/playlists" bind GET to playlistsController::getPlaylists,
         ),
         routes(
-            "/tracks" bind GET to webController::showTracksForDate
+            "/tracks" bind GET to webController::showTracksForDate,
+            "/tracksOfWeek" bind GET to webController::showWeek,
         )
 )
 

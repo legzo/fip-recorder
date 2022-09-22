@@ -6,6 +6,7 @@
     </appender>
 
     <logger name="io.jterrier" level="DEBUG"/>
+    <logger name="Exposed" level="DEBUG"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT" />
