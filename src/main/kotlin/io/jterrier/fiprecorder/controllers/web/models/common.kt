@@ -27,7 +27,6 @@ data class LinksViewModel(
     val createPlaylist: String = "",
 )
 
-
 internal fun Statistics.toViewModel() =
     DateStatisticsViewModel(
         trackCount = trackCount,

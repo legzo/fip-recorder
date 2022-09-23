@@ -24,10 +24,13 @@ data class DayViewModel(
                 tracks = tracks.map { it.toViewModel() },
                 stats = statisticsForDate.toViewModel(),
                 links = LinksViewModel(
-                    previous = "tracks?date=" + localDate.minusDays(1),
-                    next = "tracks?date=" + localDate.plusDays(1),
+                    previous = datePageUrl(localDate, -1),
+                    next = datePageUrl(localDate, 1),
                 )
             )
+
+        private fun datePageUrl(localDate: LocalDate, dateOffset: Long) =
+            "tracks?date=" + localDate.plusDays(dateOffset)
 
         private fun Track.toViewModel() =
             TrackViewModel(

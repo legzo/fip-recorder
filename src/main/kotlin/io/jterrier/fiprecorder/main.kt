@@ -8,6 +8,7 @@ import io.jterrier.fiprecorder.database.DatabaseConnector
 import io.jterrier.fiprecorder.services.PlaylistService
 import io.jterrier.fiprecorder.services.TrackService
 import io.jterrier.fiprecorder.controllers.web.WebController
+import io.jterrier.fiprecorder.models.WeekOfYear
 import io.jterrier.fiprecorder.services.StatsService
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
@@ -30,7 +31,7 @@ private val statsService = StatsService()
 
 private val tracksController = TracksController(trackService, statsService)
 private val playlistsController = PlaylistsController(playlistService, trackService, statsService)
-private val webController = WebController(trackService, statsService)
+private val webController = WebController(trackService, statsService, playlistService)
 
 val app: HttpHandler = routes(
         "/api" bind routes(
@@ -44,6 +45,12 @@ val app: HttpHandler = routes(
             "/tracksOfWeek" bind GET to webController::showWeek,
         )
 )
+
+object Urls {
+
+    fun weekPage(week: WeekOfYear, weekOffset: Int = 0) =
+        "tracksOfWeek?year=${week.year}&week=${week.weekIndex + weekOffset}"
+}
 
 fun main() {
     val server = app.asServer(Jetty(9000)).start()

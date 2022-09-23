@@ -10,6 +10,7 @@ import io.jterrier.fiprecorder.services.TrackService
 import org.http4k.core.Body
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.format.Jackson.auto
 import org.slf4j.LoggerFactory
@@ -35,16 +36,25 @@ class PlaylistsController(
         logger.info("Treating week : $year-$weekIndex")
 
         val week = year.weekNb(weekIndex)
-        val tracks = trackService.getTracksForWeek(week)
-        val topTracksIds = statsService
-            .getTopTracks(tracks, 30)
-            .map { it.key.spotifyUri }
 
+        return when (playlistService.playlistExists(week)) {
+            true -> {
+                logger.info("Playlist already exists, doing nothing")
+                Response(NO_CONTENT).andRefresh()
+            }
+            false -> {
+                val tracks = trackService.getTracksForWeek(week)
+                val topTracksIds = statsService
+                    .getTopTracks(tracks, 30)
+                    .map { it.key.spotifyUri }
 
-        playlistService.publishPlaylist(week, topTracksIds)
-
-        return  Response(OK)
+                playlistService.publishPlaylist(week, topTracksIds)
+                Response(OK).andRefresh()
+            }
+        }
     }
 
+    private fun Response.andRefresh() =
+        header("HX-Refresh", "true")
 
 }

@@ -1,0 +1,22 @@
+<div class="grid">
+    <div>
+        <h3>
+            {{> icons/label}}
+            top labels
+        </h3>
+        {{#each stats.topLabels}}
+            <li>{{@key}} : <code>{{this}}</code></li>
+        {{/each}}
+    </div>
+
+    <div>
+        <h3>
+            {{> icons/calendar}}
+            top years
+        </h3>
+        {{#each stats.topYears}}
+            <li>{{@key}} : <code>{{this}}</code></li>
+        {{/each}}
+
+    </div>
+</div>

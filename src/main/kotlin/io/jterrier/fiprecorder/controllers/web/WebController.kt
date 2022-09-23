@@ -6,6 +6,7 @@ import io.jterrier.fiprecorder.controllers.web.models.WeekViewModel
 import io.jterrier.fiprecorder.controllers.weekQuery
 import io.jterrier.fiprecorder.controllers.yearQuery
 import io.jterrier.fiprecorder.models.weekNb
+import io.jterrier.fiprecorder.services.PlaylistService
 import io.jterrier.fiprecorder.services.StatsService
 import io.jterrier.fiprecorder.services.TrackService
 import org.http4k.core.Body
@@ -21,12 +22,13 @@ import org.slf4j.LoggerFactory
 class WebController(
     private val trackService: TrackService,
     private val statsService: StatsService,
+    private val playlistService: PlaylistService,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    //private val renderer = HandlebarsTemplates().CachingClasspath("templates")
-    private val renderer = HandlebarsTemplates().HotReload("src/main/resources/templates")
+    private val renderer = HandlebarsTemplates().CachingClasspath("templates")
+    //private val renderer = HandlebarsTemplates().HotReload("src/main/resources/templates")
 
     fun showTracksForDate(request: Request): Response {
         val view = Body.viewModel(renderer, ContentType.TEXT_HTML).toLens()
@@ -56,7 +58,9 @@ class WebController(
 
         val topTracks = statsService.getTopTracks(tracks, 30)
 
-        val viewModel = WeekViewModel.from(week, topTracks, stats)
+        val playlistAlreadyExists = playlistService.playlistExists(week)
+
+        val viewModel = WeekViewModel.from(week, topTracks, stats, playlistAlreadyExists)
         return Response(OK).with(view of viewModel)
     }
 

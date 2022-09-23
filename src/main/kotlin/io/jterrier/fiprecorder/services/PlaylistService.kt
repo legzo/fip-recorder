@@ -14,16 +14,19 @@ class PlaylistService(
         spotifyApi.getPlaylists()
 
     fun publishPlaylist(week: WeekOfYear, trackUris: List<String>) {
-        val existingPlaylists = spotifyApi.getPlaylists()
         val toPlaylistName = week.toPlaylistName()
-
-        val playlistAlreadyExistsForWeek = existingPlaylists.any { it.name == toPlaylistName }
-        if (playlistAlreadyExistsForWeek.not()) {
+        if (playlistExists(week).not()) {
             spotifyApi.createPlaylist(name = toPlaylistName, trackUris = trackUris)
         } else {
             logger.info("Playlist $toPlaylistName already exists")
         }
     }
+
+    fun playlistExists(week: WeekOfYear): Boolean =
+        spotifyApi
+            .getPlaylists()
+            .any { it.name == week.toPlaylistName() }
+
 
     private fun WeekOfYear.toPlaylistName() =
         "❤️ Fip $year week#$weekIndex"
